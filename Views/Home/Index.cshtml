@@ -1,0 +1,159 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@model List<TippPlattform.Models.Tippgruppe>
+
+<!-- Highlights Section -->
+@if(Model.Count() != 0)
+{
+    <section class="hero">
+        <h1>Offizielle Tippgruppen <span class="text-green">beitreten</span></h1>
+        <p class="hero-subtitle">Werde Teil unserer beliebtesten Community-Tippgruppen und tritt gegen andere Top-Tipper an!</p>
+    </section>
+    <section class="highlights">
+        <div class="container">
+            <div class="highlights-table">
+                @foreach(var gruppe in Model)
+                {
+                    var maxGameCount = Model.Max(gruppe => gruppe.SpieleInTippgruppes.Count());
+                    var isMostGames = gruppe.SpieleInTippgruppes.Count() == maxGameCount;
+
+                    <div class="highlight-card @(isMostGames ? "featured" : "")">
+                        <div class="highlight-header">
+                            <div class="highlight-badge">@gruppe.Badge</div>
+                            @if(isMostGames){
+                                <div class="feature-icon">
+                                    <i class="bi bi-fire"></i>
+                                </div>
+                            }
+                        </div>
+                        <div class="highlight-content">
+                            <h3>@gruppe.Name</h3>
+                            <p>@gruppe.Beschreibung</p>
+                            <div class="highlight-stats">
+                                <div class="stat">
+                                    <span class="stat-number">@gruppe.Beitrittes.Count()</span>
+                                    <span class="stat-label">Teilnehmer</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-number">@gruppe.SpieleInTippgruppes.Count()</span>
+                                    <span class="stat-label">Spiele</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-number">@gruppe.Sporttype.Name</span>
+                                    <span class="stat-label">Sportart</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="highlight-action">
+                            @if(User.Identity?.IsAuthenticated == true)
+                            {
+                                <form asp-action="Beitreten" asp-controller="TippGruppen">
+                                    <input type="hidden" name="gruppeId" value="@gruppe.Id" />
+                                    <button class="btn btn-primary" type="submit">Jetzt beitreten</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <a class="btn btn-primary" asp-controller="Home" asp-action="Login" asp-fragment="auth-container">Jetzt beitreten</a>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+<section class="hero">
+    <h1>Tippe mit Freunden. <span class="text-green">Gewinne zusammen.</span></h1>
+    <p class="hero-subtitle">Erstelle deine eigene Tippgruppe, lade Freunde ein und tippe auf Sportereignisse.</p>
+</section>
+<section class="features">
+    <div class="feature-card">
+        <div class="feature-content">
+            <h2 class="feature-title">Tippgruppen erstellen</h2>
+            <p class="feature-text">
+                Gründe deine eigene Tippgruppe und lade Freunde, Familie oder Kollegen ein. Bestimme
+                die Regeln und werde zum Tippkönig!
+            </p>
+        </div>
+        <div class="feature-icon">
+            <i class="bi bi-people-fill"></i>
+        </div>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-content">
+            <h2 class="feature-title">Alle Sportereignisse</h2>
+            <p class="feature-text">
+                Tippe auf alle wichtigen Fußball-Ligen, Turniere und andere Sportarten. Wir
+                aktualisieren die Ergebnisse in Echtzeit.
+            </p>
+        </div>
+        <div class="feature-icon">
+            <i class="bi bi-trophy-fill"></i>
+        </div>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-content">
+            <h2 class="feature-title">Benachrichtigungen</h2>
+            <p class="feature-text">
+                Erhalte Erinnerungen für anstehende Spiele und verpasse nie wieder einen Tipp. Werde
+                über neue Ergebnisse sofort informiert.
+            </p>
+        </div>
+        <div class="feature-icon">
+            <i class="bi bi-bell-fill"></i>
+        </div>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-content">
+            <h2 class="feature-title">Kostenlos & Sicher</h2>
+            <p class="feature-text">
+                Erlebe Tippfreude ohne Geldeinsätze. Bleibe frei von Spielsuchtrisiken - nur
+                gesunder Wettkampf!
+            </p>
+        </div>
+        <div class="feature-icon">
+            <i class="bi bi-shield-fill-check"></i>
+        </div>
+    </div>
+</section>
+
+<section class="how-it-works">
+    <div class="illustration">
+        <img src="~/buddybet image.png" alt="BUDDYBET Plattform Image" />
+    </div>
+
+    <div class="steps">
+        <h2>So funktioniert's</h2>
+        <p>In drei einfachen Schritten zur BUDDYBET</p>
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <h3>Registrieren</h3>
+                <p>Erstelle deinen Account in wenigen Sekunden</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <h3>Tippgruppe erstellen oder beitreten</h3>
+                <p>Gründe deine eigene Tippgruppe oder tritt einer existierenden Gruppe bei</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <h3></i>Tippen und gewinnen</h3>
+                <p>Gib deine Tipps ab, verfolge die Ergebnisse und steige in der Rangliste auf</p>
+            </div>
+        </div>
+    </div>
+</section>

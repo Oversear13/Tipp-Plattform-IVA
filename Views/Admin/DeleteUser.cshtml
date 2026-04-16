@@ -1,0 +1,20 @@
+﻿@model TippPlattform.Models.User
+
+@{
+    ViewData["Title"] = "Benutzer löschen";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<h3>Möchtest du diesen Benutzer wirklich löschen?</h3>
+<div>
+    <p><strong>Benutzername:</strong> @Model.Username</p>
+    <p><strong>E-Mail:</strong> @Model.Email</p>
+    <p><strong>Rolle:</strong> @Model.Role</p>
+
+    <form asp-action="DeleteUser" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Löschen</button>
+        <a asp-action="UserListe" class="btn btn-secondary">Abbrechen</a>
+    </form>
+</div>

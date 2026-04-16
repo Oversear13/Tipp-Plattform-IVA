@@ -1,0 +1,20 @@
+﻿
+@model List<TippPlattform.Models.Beitritt>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Benutzer ID</th>
+            <th>Benutzername</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var beitritt in Model)
+    {
+        <tr>
+            <td>@beitritt.User.Id</td>
+            <td>@beitritt.User.Username</td>
+        </tr>
+    }
+    </tbody>
+</table>

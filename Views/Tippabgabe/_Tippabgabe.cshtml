@@ -1,0 +1,212 @@
+﻿@model TippabgabeViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tippabgabe</title>
+
+    <!-- CSS-Dateien -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/colors.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/btn.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/input.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/table.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/navtabs.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/TippPlattform.styles.css" asp-append-version="true" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap">
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+</head>
+<body>
+    
+
+    <div class="tippabgabe-wrapper">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Datum</th>
+                    <th>Spiel</th>
+                    <th>Punkteregel</th>
+                    <th>Dein Tipp</th>
+                    <th>Tipptermin</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+               
+                @if (Model.SpieleInGruppe.Any())
+                {
+                    @foreach (var spiel in Model.SpieleInGruppe)
+                    {
+                        var tipp = Model.Tippscheine.FirstOrDefault(t => t.SpielId == spiel.SpielId);
+                        <tr data-gruppeid="@Model.TippGruppe?.Id" data-spielid="@spiel.SpielId">
+                            <td>@spiel.Spiel.SpielBeginn?.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                            <td>@spiel.Spiel.TeamA.Name <br /> @spiel.Spiel.TeamB.Name</td>
+                            <td>
+                                @if (spiel.PunkteRegel == null)
+                                {
+                                    <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="Exakter Tipp: 4 Punkte<br> Tordifferenz: 3 Punkte<br> Tendenztipp: 2 Punkte<br> Falscher Tipp: 0 Punkte">Standard Regelset</div>
+                                }
+                                    else
+                                    {
+                                        @spiel.PunkteRegel.Name
+                                    }
+                            </td>
+                            <td>
+                                <div class="tipp-container">
+                                    <input type="number" min="0" class="form-control tippA" style="max-height: 36px; max-width: 112px;" value="@(tipp?.TippA ?? null)" />
+                                    <p style="margin-bottom: 0px;">:</p>
+                                    <input type="number" min="0" class="form-control tippB" style="max-height: 36px; max-width: 112px;" value="@(tipp?.TippB ?? null)" />
+                                    <span class="success-message" style="display:none;color:green;">Gespeichert!</span>
+                                    <span class="error-message" style="display:none;color:red;">Fehler beim Speichern!</span>
+                                </div>
+                            </td>
+                            <td>bis Anpfiff</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    if (Model.IstTippGruppeAdmin)
+                    {
+                        <tr>
+                            <td colspan="5">
+                                Es sind noch keine Spiele vorhanden.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5">Warte, bis dein Tippgruppen-Admin ein Spiel hinzufügt.</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        <div class="text-end mb-3">
+            <form method="post" asp-controller="TippGruppen" asp-action="GruppeVerlassen">
+                <input type="hidden" name="gruppeId" value="@Model.TippGruppe?.Id" />
+                <button type="submit" class="btn btn-sm btn-warning">
+                    🚪 Tippgruppe verlassen
+                </button>
+            </form>
+        </div>
+
+    </div>
+    <script>
+        $(document).ready(function () {
+            $(".tipp-form").on("submit", function (e) {
+                e.preventDefault(); // Verhindert das Neuladen der Seite
+                
+                var $form = $(this);
+                var $button = $form.find('.tipp-submit');
+                var $successMsg = $form.find('.success-message');
+                var $errorMsg = $form.find('.error-message');
+                
+                // Button-Status ändern
+                $button.prop('disabled', true).text('Speichern...');
+                $successMsg.hide();
+                $errorMsg.hide();
+                
+                $.ajax({
+                    type: "POST",
+                    url: $form.attr("action"),
+                    data: $form.serialize(),
+                    success: function (response) {
+                        // UI aktualisieren
+                        $button.text('Gespeichert');
+                        $successMsg.fadeIn();
+                        
+                        // Nach 2 Sekunden Button zurücksetzen
+                        setTimeout(function() {
+                            $button.prop('disabled', false).text('Tippen');
+                            $successMsg.fadeOut();
+                        }, 2000);
+                    },
+                    error: function (xhr) {
+                        // Fehlermeldung anzeigen
+                        $button.prop('disabled', false).text('Tippen');
+                        $errorMsg.text("Fehler beim Speichern!").fadeIn();
+                        
+                        setTimeout(function() {
+                            $errorMsg.fadeOut();
+                        }, 3000);
+                    }
+                });
+            });
+            
+            // Informiere die Elternseite über die Höhe des Inhalts für iFrame-Anpassung
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'iframe-loaded',
+                        height: document.body.scrollHeight
+                    }, '*');
+                }
+            } catch (e) {
+                console.log('Konnte Elternfenster nicht benachrichtigen:', e);
+            }
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            // Debounce to avoid too many requests while typing
+            let debounceTimeout;
+            $('.tippA, .tippB').on('input', function () {
+                clearTimeout(debounceTimeout);
+                const $row = $(this).closest('tr');
+                const tippA = $row.find('.tippA').val();
+                const tippB = $row.find('.tippB').val();
+                const gruppeId = $row.data('gruppeid');
+                const spielId = $row.data('spielid');
+                const $successMsg = $row.find('.success-message');
+                const $errorMsg = $row.find('.error-message');
+
+                // Only submit if both values are not empty and are numbers
+                if (tippA !== "" && tippB !== "" && !isNaN(tippA) && !isNaN(tippB)) {
+                    debounceTimeout = setTimeout(function () {
+                        $.ajax({
+                            type: "POST",
+                            url: '@Url.Action("TippAbgeben", "Tippabgabe")',
+                            data: {
+                                gruppeId: gruppeId,
+                                spielId: spielId,
+                                tippA: tippA,
+                                tippB: tippB
+                            },
+                            success: function () {
+                                $successMsg.fadeIn();
+                                setTimeout(function () { $successMsg.fadeOut(); }, 2000);
+                            },
+                            error: function () {
+                                $errorMsg.fadeIn();
+                                setTimeout(function () { $errorMsg.fadeOut(); }, 3000);
+                            }
+                        });
+                    }, 400); // 400ms debounce
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('[data-bs-toggle="tooltip"]').tooltip();
+        });
+    </script>
+
+</body>
+</html>

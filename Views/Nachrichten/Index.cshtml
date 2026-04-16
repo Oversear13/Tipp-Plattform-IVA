@@ -1,0 +1,87 @@
+﻿@model List<TippPlattform.Models.Nachricht>
+
+
+<div class="nachrichten-header">
+    <h2 style="margin-bottom: 8px;">Nachrichten</h2>
+    <p style="margin-bottom: 24px;">Deine eingehenden Nachrichten und Einladungen</p>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Von</th>
+            <th>Nachricht</th>
+            <th>Annehmen</th>
+            <th>Löschen</th>
+            <th>Uhrzeit</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model == null || !Model.Any())
+        {
+            <tr>
+                <td colspan="6">
+                    🎉 Hurra, keine neuen Nachrichten! Genieße die Ruhe. 😊
+                </td>
+            </tr>
+
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                <tr id="nachricht-@item.Id">
+                    <form asp-action="Accept">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <td>@item.Sender.Username</td>
+                        <td>@item.Nachrichtentext</td>
+                        <td>
+                            <button class="btn icon-btn" type="submit">
+                                <i class="bi bi-check-lg"></i>
+                            </button>
+
+                        </td>
+                        <td>
+                            <button class="btn icon-btn" onclick="deleteMessage(@item.Id)" type="button">
+                                <i class="bi bi-trash-fill"></i>
+                            </button>
+                        </td>
+                        <td>@FormatRelativeTime(item.SendDatum)</td>
+                    </form>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+@functions {
+    public string FormatRelativeTime(DateTime dateTime)
+    {
+        var span = DateTime.Now - dateTime;
+        if (span.TotalSeconds < 60)
+            return "vor wenigen Sekunden";
+        if (span.TotalMinutes < 2)
+            return "vor einer Minute";
+        if (span.TotalMinutes < 60)
+            return $"vor {(int)span.TotalMinutes} Minuten";
+        if (span.TotalHours < 2)
+            return "vor einer Stunde";
+        if (span.TotalHours < 24)
+            return $"vor {(int)span.TotalHours} Stunden";
+        if (span.TotalDays < 2)
+            return "gestern";
+        if (span.TotalDays < 7)
+            return $"vor {(int)span.TotalDays} Tagen";
+
+        return dateTime.ToLocalTime().ToString("dd.MM.yyyy");
+    }
+}
+<script>
+    function deleteMessage(id) {
+        fetch(`/Nachrichten/Delete/${id}`, { method: "POST" })
+            .then(res => {
+                if (res.ok) {
+                    document.getElementById(`nachricht-${id}`)?.remove();
+                }
+            });
+    }
+</script>

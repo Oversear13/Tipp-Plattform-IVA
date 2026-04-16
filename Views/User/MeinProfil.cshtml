@@ -1,0 +1,64 @@
+﻿@model TippPlattform.Models.MeinProfilViewModel
+
+<h2>Mein Profil</h2>
+
+<form asp-action="MeinProfil" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div style="width: 600px;">
+        <div class=" form-field">
+            <label asp-for="Username">Benutzername*</label>
+            <input asp-for="Username" class="form-control" />
+            <span asp-validation-for="Username" class="text-danger"></span>
+        </div>
+
+        <div class="form-field">
+            <label asp-for="Email">E-Mail*</label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="form-field">
+            <label asp-for="Geburtstag">Geburtstag*</label>
+            <input asp-for="Geburtstag" class="form-control" type="date" min="1925-01-01" max="3000-12-31" />
+            <span asp-validation-for="Geburtstag" class="text-danger"></span>
+        </div>
+
+        <div class="form-field">
+            <label asp-for="NeuesPasswort">Neues Passwort</label>
+            <input asp-for="NeuesPasswort" class="form-control" type="password" />
+            <span asp-validation-for="NeuesPasswort" class="text-danger"></span>
+        </div>
+
+        <div class="form-field">
+            <label asp-for="PasswortBestaetigung">Passwort bestätigen</label>
+            <input asp-for="PasswortBestaetigung" class="form-control" type="password" />
+            <span asp-validation-for="PasswortBestaetigung" class="text-danger"></span>
+        </div>
+
+    <button type="submit" class="btn btn-primary">Speichern</button>
+
+    <a asp-action="DeleteMeinProfilConfirmation" asp-controller="User" class="btn btn-danger">Konto löschen</a>
+
+</form>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-success mt-3">@ViewBag.Message</div>
+}
+
+@if (TempData["SuccessMessage"] != null) // Abfragen für die Weiterleitung nach dem Löschen
+{
+    <div class="alert alert-success mt-3">@TempData["SuccessMessage"]</div>
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger mt-3">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}

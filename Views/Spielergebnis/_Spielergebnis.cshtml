@@ -1,0 +1,69 @@
+﻿@model SpielergebnisViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spielergebnis</title>
+
+    <!-- CSS-Dateien -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/colors.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/btn.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/input.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/table.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/navtabs.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/TippPlattform.styles.css" asp-append-version="true" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</head>
+
+
+
+<body>
+    <div class="tippabgabe-wrapper">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Datum</th>
+                    <th>Spiel</th>
+                    <th>Dein Tipp</th>
+                    <th>Ergebnis</th>
+                    <th>Dein Gewinn</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var spiele in Model.SpielMitUserTipps)
+                {
+                    <tr>
+                        <td>
+                            @spiele.Spiel.SpielBeginn?.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+                        </td>
+                        <td>
+                            @spiele.Spiel.TeamA.Name <br /> @spiele.Spiel.TeamB.Name
+                        </td>
+                        <td>
+                            @(spiele.UserTipp?.TippA.ToString() ?? "") : @(spiele.UserTipp?.TippB.ToString() ?? "")
+                        </td>
+                        <td>@spiele.Spiel.TeamAScore : @spiele.Spiel.TeamBScore</td>
+                        <td>@(spiele.UserTipp?.Points.ToString() ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+﻿@model TippPlattform.Models.MeinProfilViewModel
+
+<h2>Konto löschen bestätigen</h2>
+
+<div class="alert alert-danger">
+    <strong>Achtung!</strong> Sie sind dabei, Ihr Konto <strong>@Model.Username</strong> unwiderruflich zu löschen. Diese Aktion kann nicht rückgängig gemacht werden.
+</div>
+
+<p>Sind Sie sicher, dass Sie Ihr Konto löschen möchten?</p>
+
+<form asp-action="DeleteMeinProfilConfirmation" asp-controller="User" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+
+    <button type="submit" class="btn btn-danger">Ja, mein Konto löschen</button>
+    <a asp-action="MeinProfil" class="btn btn-secondary">Abbrechen</a>
+</form>

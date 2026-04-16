@@ -1,0 +1,112 @@
+﻿@model List<TippPlattform.Models.TippgruppenVerwaltung>
+<h2>Alle Tippgruppen</h2>
+
+<table class="table" id="tippgruppenTable">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Sportart</th>
+            <th>Gruppenbesitzer</th>
+            <th>Anzahl der Mitglieder</th>
+            <th>Löschen</th>
+            <th>Verwaltung</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var gruppe in Model)
+        {
+            <tr>
+                <td>
+                    @gruppe.Name
+                    @if (!string.IsNullOrEmpty(gruppe.Badge))
+                    {
+                        <i class="bi bi-patch-check-fill" style="color: var(--color-green-base)" data-bs-toggle="tooltip"
+                            data-bs-placement="top" title="Offizielle Tippgruppe"></i>
+                    }
+                </td>
+                <td>@gruppe.SportArt</td>
+                <td>@gruppe.Gruppenbesitzer</td>
+                <td>@gruppe.AnzalMitglieder</td>
+                <td>
+                    @* Löschen-Button öffnet Modal *@
+                    <button type="button" class="icon-btn" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                        data-gruppe-id="@gruppe.Id">
+                        <i class="bi bi-trash-fill"></i>
+                    </button>
+                </td>
+                <td>
+                    <a type="button" class="btn btn-outline" asp-controller="TippGruppen" asp-action="Tippen"
+                        asp-route-gruppeId="@gruppe.Id" asp-route-spielTag="1" class="btn btn-outline">
+                        Zur Verwaltung
+                        <i class="bi bi-chevron-right" style="font-size: 14px;"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@* Delete Confirmation Modal *@
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="deleteForm" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Tippgruppe löschen</h5>
+                    <button type="button" class="icon-btn" style="padding: 4px 8px;" data-bs-dismiss="modal"
+                        aria-label="Schließen">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Bist du sicher, dass du die Tippgruppe löschen möchtest?</p>
+                    <div class="button-container">
+                        <button type="button" class="btn btn-outline" data-bs-dismiss="modal">Abbrechen</button>
+                        <button type="submit" class="btn btn-danger" id="confirmDeleteBtn">Löschen</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $('#tippgruppenTable').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/de-DE.json',
+                search: "Suche eine Tippgruppe:",
+                info: "Zeige _START_ bis _END_ von _TOTAL_ Gruppen",
+                paginate: {
+                    first: ">>",
+                    last: "<<",
+                    next: ">",
+                    previous: "<"
+                }
+            },
+            pageLength: 10,
+            lengthChange: false
+        });
+
+        // Delete Modal
+        document.addEventListener('DOMContentLoaded', function () {
+            var deleteModal = document.getElementById('deleteModal');
+            if (deleteModal) {
+                deleteModal.addEventListener('show.bs.modal', function (event) {
+                    var button = event.relatedTarget;
+                    var groupId = button.getAttribute('data-gruppe-id');
+                    var form = deleteModal.querySelector('#deleteForm');
+                    form.action = '/Admin/DeleteGroup/' + groupId;
+                });
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+
+    </script>
+}

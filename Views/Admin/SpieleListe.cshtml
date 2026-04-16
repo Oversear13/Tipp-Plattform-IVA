@@ -1,0 +1,298 @@
+﻿@* <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+ *@
+@model SpileListeViewModel;
+
+<div class="container">
+    <h2>Spiel Verwaltung</h2>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addGameModal">
+        Spiel hinzufügen <i class="bi bi-plus-lg"></i>
+    </button>
+    <!-- Liga Template -->
+    @foreach (var liga in Model.Ligen)
+    {
+        <div class="mt-5">
+            <h4 class="mb-3">@liga.LigaName</h4>
+            <div style="max-height: 400px; overflow-y: auto;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Datum</th>
+                            <th>Spiel</th>
+                            <th>Ergebnis</th>
+                            <th>Bearbeiten</th>
+                            <th>Löschen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var spiel in liga.Spieles.OrderByDescending(x => x.SpielBeginn))
+                        {
+                            <tr>
+                                <td>@spiel.SpielBeginn?.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                                <td>@spiel.TeamA.Name<br>@spiel.TeamB.Name</td>
+                                <td>@(spiel.TeamAScore == null ? "- : -" : $"{spiel.TeamAScore} : {spiel.TeamBScore}")</td>
+                                <td>
+                                    <button type="button" class="icon-btn" data-bs-toggle="modal"
+                                    data-bs-target="#editGameModal" data-id="@spiel.Id" data-league="@spiel.LigaId"
+                                    data-teama="@spiel.TeamA.Id" data-teamb="@spiel.TeamB.Id"
+                                    data-date="@spiel.SpielBeginn?.ToLocalTime().ToString("yyyy-MM-dd")"
+                                    data-time="@spiel.SpielBeginn?.ToLocalTime().ToString("HH:mm")"
+                                    data-scorea="@spiel.TeamAScore" data-scoreb="@spiel.TeamBScore" data-spieltag="1">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </td>
+
+                                <td>
+                                    <button type="button" class="icon-btn"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteSpielModal"
+                                            data-spielid="@spiel.Id"
+                                            @((spiel.SpielBeginn > DateTime.UtcNow ? "" : "disabled"))>
+                                        <i class="bi bi-trash-fill"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    }
+</div>
+
+
+
+<!-- Modal for adding game -->
+
+<div class="modal fade" id="addGameModal" tabindex="-1" aria-labelledby="addGameModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-action="SpielHinzufuegen">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addGameModalLabel">Neues Spiel hinzufügen</h5>
+                    <button type="button" class="icon-btn" style="padding: 4px 8px;" data-bs-dismiss="modal"
+                        aria-label="Schließen">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-field">
+                        <label for="liga" class="form-label">Liga / Wettbewerb</label>
+                        <select class="form-select" id="league" name="liga">
+                            <option disabled selected></option>
+                            @foreach (var league in Model.Ligen)
+                            {
+                                <option value="@league.ApiLigaId">@league.LigaName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="heim" class="form-label">Heimmannschaft</label>
+                        <select class="form-select" id="teamA" name="teamAId">
+                            <option disabled></option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="auswaerts" class="form-label">Auswärtsmannschaft</label>
+                        <select class="form-select" id="teamB" name="teamBId">
+                            <option disabled></option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="datum" class="form-label">Datum</label>
+                        <input type="date" class="form-control" id="datum" name="datum">
+                    </div>
+                    <div class="form-field">
+                        <label for="uhrzeit" class="form-label">Uhrzeit (bitte in UTC eingeben)</label>
+                        <input type="time" class="form-control" id="uhrzeit" name="uhrzeit">
+                    </div>
+                    <div class="form-field">
+                        <label for="spieltag" class="form-label">Spieltag</label>
+                        <input type="text" class="form-control" id="spieltag" name="spieltag">
+                    </div>
+
+                    <div class="button-container">
+                        <button type="button" class="btn btn-outline" data-bs-dismiss="modal">Abbrechen</button>
+                        <button type="submit" class="btn btn-primary" id="saveButton">Speichern</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for editing Game -->
+<div class="modal fade" id="editGameModal" tabindex="-1" aria-labelledby="editGameModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="SpielBearbeiten" method="post">
+                <input type="hidden" id="editGameId" name="id" />
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editGameModalLabel">Spiel bearbeiten</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-field">
+                        <label class="form-label">Liga / Wettbewerb</label>
+                        <select class="form-select" id="editLeague" name="liga" disabled>
+                            <option disabled selected></option>
+                            @foreach (var league in Model.Ligen)
+                            {
+                                <option value="@league.ApiLigaId">@league.LigaName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Heimmannschaft</label>
+                        <select class="form-select" id="editTeamA" name="teamAId">
+                            <option disabled></option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Auswärtsmannschaft</label>
+                        <select class="form-select" id="editTeamB" name="teamBId">
+                            <option disabled></option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Heim-Tore</label>
+                        <input type="text" class="form-control" id="scorea" name="scoreA" />
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Auswärts-Tore</label>
+                        <input type="text" class="form-control" id="scoreb" name="scoreB" />
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label">Datum</label>
+                        <input type="date" class="form-control" id="editDatum" name="datum">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Uhrzeit (bitte in UTC eingeben)</label>
+                        <input type="time" class="form-control" id="editUhrzeit" name="uhrzeit">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Spieltag</label>
+                        <input type="text" class="form-control" id="editSpieltag" name="spieltag">
+                    </div>
+                    <div class="button-container">
+                        <button type="button" class="btn btn-outline" data-bs-dismiss="modal">Abbrechen</button>
+                        <button type="submit" class="btn btn-primary" id="saveButton">Speichern</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for deleting Game -->
+<div class="modal fade" id="deleteSpielModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-controller="Admin" asp-action="SpielLoeschen">
+                <input type="hidden" name="spielid" id="delete-spiel-id" />
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Spiel löschen</h5>
+                    <button type="button" class="icon-btn" style="padding: 4px 8px;" data-bs-dismiss="modal" aria-label="Schließen">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Bist du sicher, dass du das Spiel löschen möchtest?
+                    </p>
+                    <div class="button-container">
+                        <button type="button" class="btn btn-outline" data-bs-dismiss="modal">Abbrechen</button>
+                        <button type="submit" class="btn btn-danger">Löschen</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('league').addEventListener('change', async function () {
+        const leagueId = this.value;
+
+        if (!leagueId) return;
+
+        const response = await fetch(`/api/teams?leagueId=${leagueId}`);
+        const teams = await response.json();
+
+        const teamA = document.getElementById('teamA');
+        const teamB = document.getElementById('teamB');
+
+        teamA.innerHTML = '<option>Mannschaft wählen</option>';
+        teamB.innerHTML = '<option>Mannschaft wählen</option>';
+
+        teams.forEach(team => {
+            const optionA = new Option(team.name, team.id);
+            const optionB = new Option(team.name, team.id);
+            teamA.add(optionA);
+            teamB.add(optionB);
+        });
+    });
+</script>
+<script>
+    const deleteSpielModal = document.getElementById('deleteSpielModal');
+    deleteSpielModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const spielId = button.getAttribute('data-spielid');
+        const hiddenInput = document.getElementById('delete-spiel-id');
+        hiddenInput.value = spielId;
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editGameModal = document.getElementById('editGameModal');
+        editGameModal.addEventListener('show.bs.modal', async function (event) {
+            const button = event.relatedTarget;
+            if (!button) return;
+
+            // Get data from button
+            const id = button.getAttribute('data-id');
+            const leagueId = button.getAttribute('data-league');
+            const teamAId = button.getAttribute('data-teama');
+            const teamBId = button.getAttribute('data-teamb');
+            const scoreA = button.getAttribute('data-scorea');
+            const scoreB = button.getAttribute('data-scoreb');
+            const date = button.getAttribute('data-date');
+            const time = button.getAttribute('data-time');
+            const spieltag = button.getAttribute('data-spieltag');
+
+            // Set hidden id
+            document.getElementById('editGameId').value = id;
+
+            // Set league
+            const leagueSelect = document.getElementById('editLeague');
+            leagueSelect.value = leagueId;
+
+            // Fetch teams for league and set team selects
+            const response = await fetch(`/api/teams?leagueId=${leagueId}`);
+            const teams = await response.json();
+
+            const teamASelect = document.getElementById('editTeamA');
+            const teamBSelect = document.getElementById('editTeamB');
+            teamASelect.innerHTML = '<option disabled>Mannschaft wählen</option>';
+            teamBSelect.innerHTML = '<option disabled>Mannschaft wählen</option>';
+            teams.forEach(team => {
+                const optionA = new Option(team.name, team.id);
+                const optionB = new Option(team.name, team.id);
+                teamASelect.add(optionA);
+                teamBSelect.add(optionB);
+            });
+            teamASelect.value = teamAId;
+            teamBSelect.value = teamBId;
+
+            // Set score, date, time, spieltag
+            document.getElementById('scorea').value = scoreA;
+            document.getElementById('scoreb').value = scoreB;
+            document.getElementById('editDatum').value = date;
+            document.getElementById('editUhrzeit').value = time;
+            document.getElementById('editSpieltag').value = spieltag;
+        });
+    });
+</script>

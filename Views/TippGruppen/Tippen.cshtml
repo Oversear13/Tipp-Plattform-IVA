@@ -1,0 +1,204 @@
+﻿@model TippenViewModel
+@{
+    ViewData["Title"] = "Tippgruppe";
+}
+<a asp-controller="TippGruppen" asp-action="Index" class="btn btn-back"><i class="bi bi-chevron-left back-icon"></i>Zurück zum Gruppenübersicht</a>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<h2>@Model.Tippgruppe?.Name</h2>
+<!-- Tab Navigation -->
+<div class="d-flex justify-content-end align-items-center gap-4">
+    <button id="prevBtn" class="btn btn-nav" data-direction="-1"><i class="bi bi-chevron-left"></i></button>
+
+    <p id="spieltagLabel" style="margin-bottom: 0; color: var(--color-white-base);">Spieltag 1</p>
+
+    <button id="nextBtn" class="btn btn-nav" data-direction="1"><i class="bi bi-chevron-right"></i></button>
+</div>
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab">Tippabgabe</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab">Spielergebnis</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab3" type="button" role="tab">Leaderboard</button>
+    </li>
+    @{
+        var userId = User.FindFirst("UserId")?.Value;
+    }
+    @if (Model.Tippgruppe?.TippgruppeAdmins.Any(m => m.UserId.ToString() == userId) == true || User.IsInRole("Admin"))
+    {
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab4" type="button" role="tab">Mitglieder</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab5" type="button" role="tab" id="verwaltung-tab">Verwaltung</button>
+        </li>
+    }
+</ul>
+
+<!-- Tab Content -->
+<div class="tab-content mt-3">
+    <div class="tab-pane fade show active" id="tab1" role="tabpanel">
+        <div id="tippabgabe-container"></div>
+        @*<iframe src="@Url.Action("Tippabgabe", "Tippabgabe", new { gruppeId = Model.Tippgruppe?.Id })" style="border:none; width:100%; height:80vh;"></iframe>*@    </div>
+    <div class="tab-pane fade" id="tab2" role="tabpanel">
+        <div id="spielergebnis-container"></div>
+        @*<iframe src="@Url.Action("Index", "Spielergebnis", new { gruppeId = Model.Tippgruppe?.Id })" style="border:none; width:100%; height:80vh;"></iframe>*@
+    </div>
+    <div class="tab-pane fade" id="tab3" role="tabpanel">
+        <div id="leaderboard-container"></div>
+        @* <iframe src="@Url.Action("Index", "Leaderboard", new { gruppeId = Model.Tippgruppe?.Id })" style="border:none; width:100%; height:80vh;"></iframe> *@
+
+    </div>
+    <!-- 🔽 NEU: Mitglieder-Tab-Inhalt lädt PartialView direkt -->
+
+    <div class="tab-pane fade" id="tab4" role="tabpanel">
+        @if (Model.Beitritte == null || !Model.Beitritte.Any())
+        {
+            <p>Es sind noch keine Mitglieder beigetreten.</p>
+        }
+        else
+        {
+            @await Html.PartialAsync("_MitgliederTab", Model.Beitritte)
+        }
+    </div>
+
+    <div class="tab-pane fade" id="tab5" role="tabpanel">
+        <div id="verwaltung-container"></div>
+        @* <iframe src="@Url.Action("Verwaltung", "TippGruppen", new { gruppeId = Model.Tippgruppe?.Id })" style="border:none; width:100%; height:80vh;"></iframe> *@
+    </div>
+</div>
+
+<!-- ➕ Hier Modal einfügen -->
+<div class="modal fade" id="mitgliedModal" tabindex="-1" aria-labelledby="mitgliedModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mitgliedModalLabel">Aktion</h5>
+                <button type="button" class="btn-close orange-x" data-bs-dismiss="modal" aria-label="Schließen"></button>
+            </div>
+            <div class="modal-body" id="mitgliedModalBody">
+                <!-- Die Nachricht wird dynamisch hier eingesetzt -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var gruppeId = '@Model.Tippgruppe?.Id';
+
+        $.ajax({
+            url: '@Url.Action("Verwaltung", "Verwaltung")',
+            data: { gruppeId: gruppeId },
+            success: function (result) {
+                $('#verwaltung-container').html(result);
+            },
+            error: function () {
+                $('#verwaltung-container').html('<p>Fehler beim Laden der Tippabgabe.</p>');
+            }
+        });
+    });
+</script>
+
+<!-- Tab speichern/wiederherstellen -->
+<script>
+    $(function () {
+        // Beim Tab-Wechsel speichern
+        //$('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+        //    localStorage.setItem('activeTab', $(e.target).data('bs-target'));
+        //});
+            const queryTab = '@Context.Request.Query["tab"]';
+    if (queryTab) {
+        localStorage.setItem('activeTab', '#' + queryTab);
+    }
+
+
+        // Beim Laden gespeicherten Tab aktivieren
+        var activeTab = localStorage.getItem('activeTab');
+        if (activeTab) {
+            var tabButton = $('button[data-bs-target="' + activeTab + '"]');
+            if (tabButton.length) {
+                tabButton.tab('show');
+            }
+        }
+    });
+</script>
+
+<!--  Scrollposition speichern/wiederherstellen -->
+<script>
+    window.addEventListener("beforeunload", function () {
+        localStorage.setItem("scrollPos", window.scrollY);
+    });
+
+    window.addEventListener("load", function () {
+        const scrollPos = localStorage.getItem("scrollPos");
+        if (scrollPos) {
+            window.scrollTo(0, parseInt(scrollPos));
+        }
+    });
+</script>
+<script>
+    let spieltag = 1;
+    const gruppeId = '@Model.Tippgruppe?.Id';
+
+    function loadIframes() {
+        $.ajax({
+            url: '@Url.Action("Tippabgabe", "Tippabgabe")',
+            data: { gruppeId: gruppeId, spieltag: spieltag },
+            success: function (result) {
+                $('#tippabgabe-container').html(result);
+            },
+            error: function () {
+                $('#tippabgabe-container').html('<p>Fehler beim Laden der Tippabgabe.</p>');
+            }
+        });
+        $.ajax({
+            url: '@Url.Action("Index", "Spielergebnis")',
+            data: { gruppeId: gruppeId, spieltag: spieltag },
+            success: function (result) {
+                $('#spielergebnis-container').html(result);
+            },
+            error: function () {
+                $('#spielergebnis-container').html('<p>Fehler beim Laden der Tippabgabe.</p>');
+            }
+        });
+        $.ajax({
+            url: '@Url.Action("Index", "Leaderboard")',
+            data: { gruppeId: gruppeId, spieltag: spieltag },
+            success: function (result) {
+                $('#leaderboard-container').html(result);
+            },
+            error: function () {
+                $('#leaderboard-container').html('<p>Fehler beim Laden der Tippabgabe.</p>');
+            }
+        });
+    }
+
+    function updateAll() {
+        $('#spieltagLabel').text('Spieltag ' + spieltag);
+        loadIframes();
+    }
+
+    $('#prevBtn, #nextBtn').on('click', function () {
+        const direction = parseInt($(this).data('direction'));
+        spieltag = Math.max(1, spieltag + direction);
+        updateAll();
+    });
+
+    $(document).ready(function () {
+        updateAll();
+    });
+        $(document).ready(function () {
+        const modalMsg = '@TempData["ModalMessage"]';
+        if (modalMsg && modalMsg.length > 0) {
+            $('#mitgliedModalBody').text(modalMsg);
+            const modal = new bootstrap.Modal(document.getElementById('mitgliedModal'));
+            modal.show();
+        }
+    });
+
+</script>
+

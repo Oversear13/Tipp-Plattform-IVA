@@ -1,0 +1,163 @@
+@{
+    ViewData["Title"] = "Allgemeine Geschäftsbedingungen";
+}
+
+<div class="agb-container">
+    <div class="agb-header">
+        <h1>Allgemeine Geschäftsbedingungen (AGB)</h1>
+        <p>Gültig für die Nutzung der BUDDYBET-Plattform</p>
+    </div>
+
+    <div class="agb-content">
+        <section class="agb-section">
+            <h2>1. Geltungsbereich</h2>
+            <p>Diese Allgemeinen Geschäftsbedingungen gelten für die Nutzung der Plattform BUDDYBET, die im Rahmen der Lehrveranstaltung „Implementierung von Anwendungssystemen" im Sommersemester 2025 an der Universität Siegen entwickelt wurde.</p>
+            <p>Die Plattform dient ausschließlich Lern- und Projektzwecken. Es handelt sich um keine öffentlich zugängliche oder kommerzielle Webanwendung.</p>
+        </section>
+
+        <section class="agb-section">
+            <h2>2. Vertragsgegenstand</h2>
+            <p>Die Nutzung der Plattform erfolgt freiwillig. Es entsteht kein rechtlich bindendes Vertragsverhältnis im Sinne eines Dienstleistungsvertrags. Ein Anspruch auf dauerhafte Verfügbarkeit, Funktionsumfang oder Support besteht nicht.</p>
+            <p>Die Inhalte und Funktionen dienen ausschließlich der Simulation einer webbasierten Tipp-Plattform im universitären Rahmen.</p>
+        </section>
+
+        <section class="agb-section">
+            <h2>3. Gegenstand der Plattform</h2>
+            <p>Mit BUDDYBET ist eine Tipp-Plattform für Sportereignisse realisiert. Der Zweck der BUDDYBET-Plattform besteht darin, sportliche Wettbewerbe spielerisch zu begleiten: Nutzer geben ihre Tipps ab, treten in Gruppen gegeneinander an und erleben ein unterhaltsames Miteinander im sportlichen Kontext.</p>
+            <p>Dabei steht nicht der finanzielle Gewinn im Vordergrund. BUDDYBET grenzt sich von manipulativen Angeboten oder problematischen Anreizsystemen ab und fördert stattdessen ein faires, integratives und verantwortungsvolles Nutzungserlebnis.</p>
+        </section>
+
+        <section class="agb-section">
+            <h2>4. Registrierung und Nutzung</h2>
+            <p>Die Nutzung der Plattform setzt eine Registrierung mit Angabe von Benutzername, Passwort, E-Mail-Adresse und Geburtsdatum voraus.</p>
+            <p>Jede registrierte Person erhält einen persönlichen Zugang zu weiteren Funktionen nach Anmeldung.</p>
+        </section>
+
+        <section class="agb-section">
+            <h2>5. Rollen und Berechtigungen</h2>
+            <p>Auf der Plattform gibt es unterschiedliche Rollen mit abgestuften Berechtigungen:</p>
+            <ul class="agb-list">
+                <li>Nach Registrierung erhalten alle Personen automatisch die Rolle „Reguläre Nutzer". Sie können Tipps abgeben, bestehenden Gruppen beitreten und Ergebnisse einsehen.</li>
+                <li>Wenn ein Nutzer eine neue Tippgruppe erstellt, wird er automatisch zum Besitzer dieser Gruppe. Tippgruppenbesitzer können ihre Gruppe verwalten.</li>
+                <li>Mitglieder des Projektteams besitzen Administratorrechte. Sie verwalten Nutzer, betreuen Inhalte und gewährleisten die Funktionsfähigkeit der Plattform.</li>
+            </ul>
+        </section>
+
+        <section class="agb-section">
+            <h2>6. Pflichten der Nutzer</h2>
+            <p>Nutzer verpflichten sich:</p>
+            <ul class="agb-list">
+                <li>die Umsetzung, das Konzept, die Ideen sowie die geleistete Arbeit des Projektteams zu respektieren und als eigenständige Leistung anzuerkennen.</li>
+                <li>keine böswilligen Angriffe oder Manipulationen am System vorzunehmen.</li>
+                <li>bei auftretenden Fehlern oder Verbesserungsvorschlägen konstruktiv vorzugehen und diese an das Projektteam weiterzuleiten.</li>
+            </ul>
+        </section>
+
+        <section class="agb-section">
+            <h2>7. Datenschutz</h2>
+            <p>Informationen zur Verarbeitung personenbezogener Daten befinden sich in der Datenschutzerklärung auf einer gesonderten Seite.</p>
+        </section>
+
+        <section class="agb-section">
+            <h2>8. Verfügbarkeit und Haftung</h2>
+            <p>Da es sich um ein universitäres Projekt handelt, wird keine dauerhafte Verfügbarkeit, Funktion oder Fehlerfreiheit garantiert. Die Nutzung erfolgt auf eigene Verantwortung.</p>
+        </section>
+
+        <section class="agb-section">
+            <h2>9. Änderungen der AGB</h2>
+            <p>Diese AGB können bei Bedarf angepasst werden. Nutzer sollten sich bei wiederholter Nutzung eigenständig über den aktuellen Stand informieren.</p>
+        </section>
+
+        <section class="agb-section">
+            <h2>10. Kontakt</h2>
+            <p>Verantwortlich für Inhalt und Betrieb im Rahmen der Lehrveranstaltung ist Projektteam Gruppe 2.</p>
+        </section>
+    </div>
+
+    <div class="agb-section">
+        <p style="text-align: right;">Stand: Juni 2025</p>
+        <div class="footer-buttons">
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary">Zurück zur Startseite</a>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+<style>
+    .agb-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .agb-header {
+        text-align: left;
+        margin-bottom: 80px;
+    }
+
+    .agb-header h1 {
+        font-size: 36px;
+        font-weight: 600;
+        line-height: 54px;
+        letter-spacing: 0.54px;
+        margin-bottom: 16px;
+        color: var(--color-text-primary);
+    }
+
+    .agb-content {
+        background-color: transparent;
+        padding: 0;
+    }
+
+    .agb-section {
+        margin-bottom: 48px;
+        padding-bottom: 32px;
+        border-bottom: 1px solid var(--color-blue-p16);
+    }
+
+    .agb-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+    .agb-section p {
+        font-size: 16px;
+        font-weight: 300;
+        letter-spacing: 0.27px;
+        color: var(--color-white-m16);
+        text-align: left;
+        margin-bottom: 16px;
+        line-height: 1.6;
+    }
+
+    .agb-list {
+        list-style: none;
+        padding-left: 0;
+        margin: 24px 0;
+    }
+
+    .agb-list li {
+        font-size: 16px;
+        font-weight: 300;
+        letter-spacing: 0.27px;
+        color: var(--color-white-m16);
+        margin-bottom: 16px;
+        padding-left: 24px;
+        position: relative;
+        text-align: left;
+        line-height: 1.6;
+    }
+
+    .agb-list li::before {
+        content: "•";
+        color: var(--color-green-base);
+        font-size: 24px;
+        position: absolute;
+        left: 0;
+        top: -4px;
+    }
+
+    .agb-section p:last-child {
+        margin-bottom: 0;
+    }
+</style>
+}

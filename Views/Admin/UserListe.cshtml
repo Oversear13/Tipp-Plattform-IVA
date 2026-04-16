@@ -1,0 +1,244 @@
+﻿@model List<TippPlattform.Models.User>
+@using System.Security.Claims;
+
+@{
+    var currentUserId = User.Identity.IsAuthenticated ? User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value : null;
+    int loggedInUserId = -1;
+    if (!string.IsNullOrEmpty(currentUserId) && int.TryParse(currentUserId, out int parsedId))
+    {
+        loggedInUserId = parsedId;
+    }
+
+    // Holen des aktuellen Suchbegriffs aus der Query String, falls vorhanden
+    var currentSearchString = Context.Request.Query["searchString"];
+}
+
+<h2>Benutzerverwaltung</h2>
+
+<form asp-action="UserListe" method="get" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="searchString" class="form-control" placeholder="Benutzername suchen..." value="@currentSearchString" />
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-primary">Suchen</button>
+            <a asp-action="UserListe" class="btn btn-secondary">Alle anzeigen</a>
+        </div>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Benutzername</th>
+            <th>E-Mail</th>
+            <th>Rolle</th>
+            <th>Bearbeiten</th>
+            <th>Löschen</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            var isCurrentUser = (user.Id == loggedInUserId);
+            <tr class="@(isCurrentUser ? "table-info" : "")">
+                <td>
+                    @user.Username
+                    @if (isCurrentUser)
+                    {
+                        <span class="badge bg-primary ms-2">Du (angemeldet)</span>
+                    }
+                </td>
+                <td>@user.Email</td>
+                <td>@user.Role</td>
+                <td>
+                    <button type="button" class="icon-btn"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editModal"
+                            data-user-id="@user.Id"
+                            data-user-name="@user.Username"
+                            data-user-email="@user.Email"
+                            data-user-role="@user.Role">
+                        <i class="bi bi-pencil-fill"></i>
+                    </button>
+                </td>
+                <td>
+                    @* Löschen-Button öffnet Modal *@
+                    <button type="button" class="icon-btn"
+                            data-bs-toggle="modal"
+                            data-bs-target="#deleteModal"
+                            data-user-id="@user.Id"
+                            data-user-name="@user.Username"
+                            data-user-role="@user.Role"
+                    @(isCurrentUser ? "disabled" : "")>
+                        <i class="bi bi-trash-fill"></i>
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@* Edit User Modal (Bleibt unverändert) *@
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="editForm" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Benutzer bearbeiten</h5>
+                    <button type="button" class="icon-btn" style="padding: 4px 8px;" data-bs-dismiss="modal" aria-label="Schließen">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="userId" name="Id" />
+
+                    <div class="form-field">
+                        <label for="username">Benutzername</label>
+                        <input type="text" id="username" name="Username" class="form-control form-input" />
+                        <span class="text-danger username-validation"></span>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="email">E-Mail</label>
+                        <input type="email" id="email" name="Email" class="form-control form-input" />
+                        <span class="text-danger email-validation"></span>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="role">Rolle</label>
+                        <select id="role" name="Role" class="form-select">
+                            <option value="User">User</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                        <div class="alert alert-warning mt-3 d-none" id="adminRoleWarning">
+                            <strong>Achtung!</strong> Sie sind dabei, diesem Benutzer die Admin-Rechte zu entziehen.
+                        </div>
+                    </div>
+
+                    <div class="button-container">
+                        <button type="button" class="btn btn-outline" data-bs-dismiss="modal">Abbrechen</button>
+                        <button type="submit" class="btn btn-primary" id="saveButton" disabled>Speichern</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* Delete Confirmation Modal (Bleibt unverändert) *@
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="deleteForm" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Benutzer löschen</h5>
+                    <button type="button" class="icon-btn" style="padding: 4px 8px;" data-bs-dismiss="modal" aria-label="Schließen">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Bist du sicher, dass du den Benutzer "<strong id="modalUsername"></strong>" löschen möchtest?</p>
+                    <div class="alert alert-warning d-none" id="adminWarning">❗ Admins können nicht gelöscht werden.</div>
+                    <div class="button-container">
+                        <button type="button" class="btn btn-outline" data-bs-dismiss="modal">Abbrechen</button>
+                        <button type="submit" class="btn btn-danger" id="confirmDeleteBtn">Löschen</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Delete Modal
+        var deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var userId = button.getAttribute('data-user-id');
+            var username = button.getAttribute('data-user-name');
+            var role = button.getAttribute('data-user-role');
+
+            var usernameSpan = deleteModal.querySelector('#modalUsername');
+            var form = deleteModal.querySelector('#deleteForm');
+            var adminWarning = deleteModal.querySelector('#adminWarning');
+            var confirmButton = deleteModal.querySelector('#confirmDeleteBtn');
+
+            usernameSpan.textContent = username;
+
+            if (role === "Admin") {
+                adminWarning.classList.remove("d-none");
+                confirmButton.disabled = true;
+            } else {
+                adminWarning.classList.add("d-none");
+                confirmButton.disabled = false;
+                form.action = '/Admin/DeleteUser/' + userId;
+            }
+        });
+
+        // Edit Modal
+        var editModal = document.getElementById('editModal');
+        var originalValues = {};
+
+        editModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var userId = button.getAttribute('data-user-id');
+            var username = button.getAttribute('data-user-name');
+            var email = button.getAttribute('data-user-email');
+            var role = button.getAttribute('data-user-role');
+            var form = editModal.querySelector('#editForm');
+
+            form.action = '/Admin/EditUser/' + userId;
+
+            var userIdInput = editModal.querySelector('#userId');
+            var usernameInput = editModal.querySelector('#username');
+            var emailInput = editModal.querySelector('#email');
+            var roleInput = editModal.querySelector('#role');
+            var adminRoleWarning = editModal.querySelector('#adminRoleWarning');
+
+            userIdInput.value = userId;
+            usernameInput.value = username;
+            emailInput.value = email;
+            roleInput.value = role;
+
+            originalValues = {
+                username: username,
+                email: email,
+                role: role
+            };
+
+            var saveButton = editModal.querySelector('#saveButton');
+            saveButton.disabled = true;
+
+            adminRoleWarning.classList.add("d-none");
+        });
+
+        editModal.addEventListener('input', function(event) {
+            checkFormChanged();
+        });
+
+        editModal.addEventListener('change', function(event) {
+            checkFormChanged();
+        });
+
+        function checkFormChanged() {
+            var usernameInput = editModal.querySelector('#username');
+            var emailInput = editModal.querySelector('#email');
+            var roleInput = editModal.querySelector('#role');
+            var saveButton = editModal.querySelector('#saveButton');
+            var adminRoleWarning = editModal.querySelector('#adminRoleWarning');
+
+            var hasChanged =
+                usernameInput.value !== originalValues.username ||
+                emailInput.value !== originalValues.email ||
+                roleInput.value !== originalValues.role;
+
+            saveButton.disabled = !hasChanged;
+
+            if (originalValues.role === "Admin" && roleInput.value === "User") {
+                adminRoleWarning.classList.remove("d-none");
+            } else {
+                adminRoleWarning.classList.add("d-none");
+            }
+        }
+    </script>
+}

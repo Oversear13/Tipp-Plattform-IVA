@@ -1,0 +1,166 @@
+﻿@model TippPlattform.Models.MitgliederViewModel
+@{
+    // ViewData["Title"] wird hier nicht benötigt, da es ein PartialView ist
+}
+
+<h4>Mitglieder von @Model.GruppenName</h4>
+
+@* Anzeigen von ModelState-Fehlern aus dem Controller *@
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var modelState in ViewData.ModelState.Values)
+            {
+                foreach (var error in modelState.Errors)
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            }
+        </ul>
+    </div>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Rolle</th>
+            <th>Beigetreten</th>
+            @if (Model.IstAdmin)
+            {
+                <th>Aktionen</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var mitglied in Model.Mitglieder.OrderBy(m => m.User.UserName)) // Optional: Sortierung
+        {
+            <tr>
+                <td>@mitglied.User.UserName (@mitglied.User.Email)</td>
+                <td>
+
+                    @if (Model.IstAdmin && mitglied.UserId != User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
+                    {
+                        <form class="role-form d-inline-block" data-user-id="@mitglied.UserId" data-gruppe-id="@Model.TippgruppeId">
+                            <select name="neueRolle" class="form-select form-select-sm" onchange="submitRoleChange(this)">
+                                <option value="Mitglied" selected="@(mitglied.Rolle == "Mitglied")">Mitglied</option>
+                                <option value="Admin" selected="@(mitglied.Rolle == "Admin")">Admin</option>
+                                <option value="Gruppenbesitzer" selected="@(mitglied.Rolle == "Gruppenbesitzer")">Gruppenbesitzer</option>
+                            </select>
+                        </form>
+                    }
+                    else
+                    {
+                        @mitglied.Rolle
+                    }
+                </td>
+                <td>@mitglied.JoinedAt.ToString("dd.MM.yyyy")</td>
+                @if (Model.IstAdmin)
+                {
+                    <td>
+
+                        @if (mitglied.UserId != User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value && mitglied.Rolle != "Gruppenbesitzer")
+                        {
+                            <button class="btn btn-sm btn-danger remove-member-btn" data-user-id="@mitglied.UserId" data-gruppe-id="@Model.TippgruppeId">Entfernen</button>
+                        }
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.IstAdmin)
+{
+    <h5 class="mt-4">Mitglied einladen</h5>
+    <form id="inviteMemberForm" class="mt-2">
+        @Html.AntiForgeryToken() @* CSRF-Token für AJAX-Formulare *@
+        <input type="hidden" name="gruppeId" value="@Model.TippgruppeId" />
+        <div class="form-group">
+            <label for="email">E-Mail-Adresse</label>
+            <input type="email" class="form-control" name="email" required />
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Einladen</button>
+    </form>
+}
+
+<script>
+    // Funktion zum Absenden des Rollenwechsels per AJAX
+    function submitRoleChange(selectElement) {
+        var form = $(selectElement).closest('form');
+        var userId = form.data('user-id');
+        var gruppeId = form.data('gruppe-id');
+        var neueRolle = $(selectElement).val();
+
+        $.ajax({
+            url: '@Url.Action("RolleAendern", "Mitglieder")',
+            type: 'POST',
+            data: {
+                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val(), // CSRF-Token
+                userId: userId,
+                gruppeId: gruppeId,
+                neueRolle: neueRolle
+            },
+            success: function (data) {
+                $('#mitgliederContainer').html(data); // Aktualisiere den Container mit der neuen PartialView
+            },
+            error: function (xhr, status, error) {
+                console.error("Fehler beim Ändern der Rolle: ", error);
+                // Hier kannst du eine Fehlermeldung anzeigen
+                $('#mitgliederContainer').prepend('<div class="alert alert-danger">Fehler beim Ändern der Rolle.</div>');
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        // AJAX für das Einladen von Mitgliedern
+        $('#inviteMemberForm').submit(function (e) {
+            e.preventDefault(); // Standard-Formularabsende verhindern
+
+            var formData = $(this).serialize(); // Formulardaten serialisieren
+
+            $.ajax({
+                url: '@Url.Action("Einladen", "Mitglieder")',
+                type: 'POST',
+                data: formData,
+                success: function (data) {
+                    $('#mitgliederContainer').html(data); // Aktualisiere den Container mit der neuen PartialView
+                    // Optional: Formularfelder zurücksetzen
+                    $('#inviteMemberForm')[0].reset();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Fehler beim Einladen: ", error);
+                    $('#mitgliederContainer').prepend('<div class="alert alert-danger">Fehler beim Einladen des Benutzers.</div>');
+                }
+            });
+        });
+
+        // AJAX für das Entfernen von Mitgliedern (Event Delegation, da Buttons dynamisch geladen werden)
+        $(document).on('click', '.remove-member-btn', function (e) {
+            if (!confirm('Sind Sie sicher, dass Sie dieses Mitglied entfernen möchten?')) {
+                return;
+            }
+
+            var userId = $(this).data('user-id');
+            var gruppeId = $(this).data('gruppe-id');
+
+            $.ajax({
+                url: '@Url.Action("Loeschen", "Mitglieder")',
+                type: 'POST',
+                data: {
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val(), // CSRF-Token
+                    userId: userId,
+                    gruppeId: gruppeId
+                },
+                success: function (data) {
+                    $('#mitgliederContainer').html(data); // Aktualisiere den Container mit der neuen PartialView
+                },
+                error: function (xhr, status, error) {
+                    console.error("Fehler beim Entfernen: ", error);
+                    $('#mitgliederContainer').prepend('<div class="alert alert-danger">Fehler beim Entfernen des Mitglieds.</div>');
+                }
+            });
+        });
+    });
+</script>

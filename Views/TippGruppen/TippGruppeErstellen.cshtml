@@ -1,0 +1,57 @@
+﻿@model CreateTippGruppeViewModel
+@{
+    ViewData["Title"] = "Tippgruppe erstellen";
+}
+<a asp-controller="TippGruppen" asp-action="Index" class="btn btn-back"><i
+    class="bi bi-chevron-left back-icon"></i>Zurück zum Gruppenübersicht</a>
+<form asp-action="TippGruppeErstellen" method="post" style="width: 600px;">
+    <h2>@ViewData["Title"]</h2>
+    <div class="form-field">
+        <label asp-for="Name" class="form-label">Name*</label>
+        <div class="input">
+            <input asp-for="Name" type="text" class="form-control" required />
+        </div>
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="Beschreibung" class="form-label">Beschreibung</label>
+        <div class="input">
+            <input asp-for="Beschreibung" type="text" class="form-control" />
+        </div>
+        <span asp-validation-for="Beschreibung" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="SporttypeId" class="form-label">Sportart</label>
+        <select asp-for="SporttypeId" class="form-select">
+            <option value="1">Fußball</option>
+            <option value="2">Basketball</option>
+        </select>
+    </div>
+    <div class="form-field">
+        <label class="form-label">Passwort</label>
+        <div class="input">
+            <input asp-for="Passwort" type="text" class="form-control" />
+        </div>
+        <p>Lasse das Feld leer, wenn jeder beitreten können soll</p>
+    </div>
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="form-field">
+            <label class="form-label">Badge</label>
+            <div class="input">
+                <input asp-for="Badge" type="text" class="form-control" />
+            </div>
+            <p>Lasse das Feld leer, wenn die Tippgruppe NICHT offiziell sein soll.</p>
+        </div>
+    }
+    <button type="submit" class="btn btn-primary">Gruppe erstellen</button>
+</form>
+
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+        });
+    </script>
+}

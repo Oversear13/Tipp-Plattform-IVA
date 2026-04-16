@@ -1,0 +1,84 @@
+﻿@model TippGruppenViewModel
+@{
+    ViewData["Title"] = "Tippgruppen";
+}
+<h2>Meine Tippgruppen</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Sportart</th>
+            <th>Tippabgabe</th>
+            <th>Tipptermin</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.TippGruppen == null || !Model.TippGruppen.Any())
+        {
+            <tr>
+                <td colspan="5">
+                    Noch keine Tippgruppe? Erstelle deine eigene oder tritt einer bei.
+                </td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var gruppe in Model.TippGruppen)
+            {
+                <tr>
+                    <td>
+                        @gruppe.Name
+                        @if (gruppe.IstAdmin)
+                        {
+                            <i class="bi bi-person-fill-gear" style="color: var(--color-green-base)" data-bs-toggle="tooltip" data-bs-placement="top" title="Du bist der Gruppenbesitzer"></i>
+                        }
+                        @if (!string.IsNullOrEmpty(gruppe.Badge))
+                        {
+                            <i class="bi bi-patch-check-fill" style="color: var(--color-green-base)" data-bs-toggle="tooltip" data-bs-placement="top" title="Offizielle Tippgruppe"></i>
+                        }
+                    </td>
+                    <td>@gruppe.SportArt</td>
+                    <td>@gruppe.AnzahlSpiele</td>
+                    <td>@(gruppe.Tipptermin.HasValue? gruppe.Tipptermin.Value.ToString("dd.MM.yyyy HH:mm") : "-")</td>
+                    <td>
+                        <form asp-action="Tippen" method="post">
+                            <input type="hidden" name="gruppeId" value="@gruppe.Id" />
+                            <button class="btn btn-outline" type="submit">Zur Gruppe<i class="bi bi-chevron-right"
+                                    style="font-size: 14px;"></i></button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<h2>Finde eine Tippgruppe</h2>
+<form asp-action="GruppenSuchen">
+    <div class="form-field" style="width: 400px;">
+        <label class="form-label">Name</label>
+        <div class="input">
+            <input type="text" class="form-control" name="Name" />
+        </div>
+        <p>Gebe den vollständigen Namen des Tippspiels ein</p>
+    </div>
+    <button class="btn btn-primary" type="submit">Suchen<i class="bi bi-chevron-right"
+            style="font-size: 14px;"></i></button>
+</form>
+
+<h2 style="margin-top: 64px;">Erstelle eine neue Tippgruppe</h2>
+<a class="btn btn-primary" asp-action="TippGruppeErstellen" asp-controller="TippGruppen">Zur Erstellung<i
+        class="bi bi-chevron-right" style="font-size: 14px;"></i></a>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+}
