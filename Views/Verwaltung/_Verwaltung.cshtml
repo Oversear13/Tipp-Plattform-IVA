@@ -1,0 +1,619 @@
+﻿@model VerwaltungViewModel
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Grundinformationen -->
+<h2>Grundinformationen</h2>
+<form id="grundeinstellungenForm" asp-action="GrundeinstellungenSpeichern" method="post">
+    <div class="settings-container">
+        <div class="settings-section">
+            <div class="form-field">
+                <label for="groupName" class="form-label">Name*</label>
+                <input type="hidden" asp-for="Tippgruppe.Id" />
+                <input type="text" class="form-control" asp-for="Tippgruppe.Name" placeholder="Name">
+            </div>
+            <div class="form-field">
+                <label for="description" class="form-label">Beschreibung</label>
+                <input type="text" class="form-control" asp-for="Tippgruppe.Beschreibung"
+                    placeholder="Beschreibung der Gruppe">
+            </div>
+
+            <div class="form-field">
+                <label for="sportType" class="form-label">Sportart</label>
+                <select class="form-select" id="sportType" asp-for="Tippgruppe.SporttypeId">
+                    <option value="1" selected>Fußball</option>
+                    <option value="2">Basketball</option>
+                </select>
+            </div>
+            <div class="button-container">
+                <button type="submit" class="btn btn-outline">Abbrechen</button>
+                <button type="submit" class="btn btn-primary">Speichern</button><!-- Trigger button -->
+            </div>
+            <div class="button-container">
+                <button type="button" class="btn btn-danger" style="width: 50%" data-bs-toggle="modal"
+                        data-bs-target="#deleteTGModal">
+                    Tippgruppe löschen
+                </button>
+            </div>
+        </div>
+        <div class="settings-section">
+            <div class="form-check">
+                <input asp-for="IstMitPasswort" type="checkbox" class="form-check-input" id="passwordProtected">
+                <label class="form-label" for="passwordProtected">Passwortgeschützte Gruppe</label>
+            </div>
+            <div class="collapse @((Model.IstMitPasswort) ? "show" : "")" id="collapsePassword">
+                <input type="text" class="form-control" asp-for="Tippgruppe.Passwort" placeholder="Passwort">
+            </div>
+        </div>
+
+    </div>
+</form>
+
+<!-- Tippregeln -->
+
+<div class="settings-container">
+    <div class="settings-section">
+        <h2>Tippregeln (Preview)</h2>
+        <div class="form-field">
+            <label for="visibility" class="form-label">Sichtbarkeit der Tipps*</label>
+            <select class="form-select" id="visibility">
+                <option selected>Erst nach Spielbeginn</option>
+                <option>Immer sichtbar</option>
+            </select>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="tipChangeAllowed" checked>
+            <label class="form-check-label" for="tipChangeAllowed">
+                Änderung der Tipps vor der Frist
+            </label>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <!-- Spielregeln -->
+        <h2>Spielregeln (Preview)</h2>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="showOdds" checked>
+            <label class="form-check-label" for="showOdds">
+                Wettquoten anzeigen
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="enableQuestions">
+            <label class="form-check-label" for="enableQuestions">
+                Fragen ermöglichen
+            </label>
+        </div>
+    </div>
+</div>
+<!-- Punkteregeln -->
+<h2>Punkteregeln</h2>
+<div class="table-container">
+    <button class="btn btn-primary" style="margin-bottom: 24px;" data-bs-toggle="modal" data-bs-target="#addRegelModal">
+        Neue Punkteregel erstellen <i class="bi bi-plus-lg"></i>
+    </button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Beschreibung</th>
+                <th>Exakter Tipp</th>
+                <th>Tordifferenz</th>
+                <th>Tendenztipp</th>
+                <th>Falscher Tipp</th>
+                <th>Löschen</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Standard Regelset</td>
+                <td>Regelset für alle Spiele</td>
+                <td><input type="number" class="form-control" value="4"></td>
+                <td><input type="number" class="form-control" value="3"></td>
+                <td><input type="number" class="form-control" value="2"></td>
+                <td><input type="number" class="form-control" value="0"></td>
+                <td>
+                    <button type="button" class="icon-btn" data-bs-toggle="modal" data-bs-target="#deleteRegelModal"
+                        disabled>
+                        <i class="bi bi-trash-fill"></i>
+                    </button>
+                </td>
+            </tr>
+
+            @foreach (var regel in Model.PunkteRegeln)
+            {
+                <tr data-rowregelid="@regel.Id">
+                    <td>@regel.Name</td>
+                    <td>@regel.Beschreibung</td>
+                    <td><input class="form-control quote-input" asp-for="@regel.Quote1" /></td>
+                    <td><input class="form-control quote-input" asp-for="@regel.Quote2" /></td>
+                    <td><input class="form-control quote-input" asp-for="@regel.Quote3" /></td>
+                    <td><input class="form-control quote-input" asp-for="@regel.Quote4" /></td>
+                    <td>
+                        <button type="button" class="icon-btn" data-bs-toggle="modal" data-bs-target="#deleteRegelModal"
+                            data-regelid="@regel.Id">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+                        <span class="success-message text-success d-none">Gespeichert!</span>
+                        <span class="error-message text-danger d-none">Fehler!</span>
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+
+</div>
+
+<!-- Spiele -->
+<h2>Neues Spiel hinzufügen</h2>
+<div class="table-container">
+    <button type="button" class="btn btn-primary" style="margin-bottom: 24px;" data-bs-toggle="modal"
+        data-bs-target="#addGameModal">
+        Spiel hinzufügen<i class="bi bi-plus-lg"></i>
+    </button>
+    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+        <table class="table">
+            <thead class="table">
+                <tr>
+                    <th>Datum</th>
+                    <th>Spiel</th>
+                    <th>Spieltag</th>
+                    <th>Tiptermin</th>
+                    <th>Punkteregel</th>
+                    <th>Bearbeiten</th>
+                    <th>Löschen</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.SpieleInGruppe != null)
+                {
+                    foreach (var spiel in Model.SpieleInGruppe)
+                    {
+                        <tr>
+                            <td>@spiel.Spiel.SpielBeginn?.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                            <td>@spiel.Spiel.TeamA.Name<br>@spiel.Spiel.TeamB.Name</td>
+                            <td>@spiel.Spiel.Spieltag</td>
+                            <td>bis Anpfiff</td>
+                            <td>@(spiel.PunkteRegel?.Name ?? "Standard Regelset")</td>
+                            <td>
+                                <button class="icon-btn" data-bs-toggle="modal" data-bs-target="#editGameModal"
+                                    data-game-id="@spiel.Spiel.Id" data-competition="@spiel.Spiel.Liga?.LigaName"
+                                    data-teams="@spiel.Spiel.TeamA.Name - @spiel.Spiel.TeamB.Name"
+                                    data-rule="@spiel.PunkteRegel?.Id" data-tiptime="@spiel.Spiel.SpielBeginn"
+                                    @(spiel.Spiel.SpielBeginn < DateTime.Now ? "disabled" : "")>
+                                    <i class="bi bi-pencil-fill"></i>
+                                </button>
+                            </td>
+                            <td>
+                                <button type="button" class="icon-btn" data-bs-toggle="modal" data-bs-target="#deleteSpielModal"
+                                    data-spielid="@spiel.Id" @(spiel.Spiel.SpielBeginn < DateTime.Now ? "disabled" : "")>
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- Modal for adding game -->
+<div class="modal fade" id="addGameModal" tabindex="-1" aria-labelledby="addGameModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-action="SpielHinzufuegen" asp-controller="Verwaltung">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addGameModalLabel">Spiel hinzufügen</h5>
+                    <button type="button" class="icon-btn" style="padding: 4px 8px;" data-bs-dismiss="modal"
+                        aria-label="Schließen">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- Wettbewerb -->
+                    <div class="mb-3">
+                        <label for="competition" class="form-label">Wettbewerb*</label>
+                        <select class="form-select" id="competition">
+                            <option selected disabled>Bitte auswählen</option>
+                            @foreach (var liga in Model.AlleLigen)
+                            {
+                                <option value="@liga.ApiLigaId">@liga.LigaName</option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Spiel(e) -->
+                    <div class="mb-3">
+                        <label for="games" class="form-label">Spiel(e)*</label>
+                        <select class="form-select" id="games" name="spielId">
+                            <option selected disabled>Bitte auswählen</option>
+                            @foreach (var spiel in Model.AlleSpiele)
+                            {
+                                <option value="@spiel.Id" data-liga-id="@spiel.LigaId">
+                                    (@spiel.SpielBeginn?.ToLocalTime().ToString("dd.MM.yyyy HH:mm")) @spiel.TeamA.Name vs
+                                    @spiel.TeamB.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Punkteregel -->
+                    <div class="mb-3">
+                        <label for="pointsRule" class="form-label">Punkteregel*</label>
+                        <select class="form-select" id="pointsRule" asp-items="Model.PunkteRegelnSelectList"
+                            name="regelId">
+                            <option selected>Standard Regelset</option>
+                            <!-- Weitere Regelsets hier -->
+                        </select>
+                    </div>
+
+                    <!-- Tipptermin -->
+                    <div class="mb-3">
+                        <label class="form-label">Tipptermin</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="tipTime" id="tipUntilStart" checked>
+                            <label class="form-check-label" for="tipUntilStart">
+                                Tipptermin bis Anpfiff
+                            </label>
+                        </div>
+                    </div>
+                    <input type="hidden" name="groupId" value="@Model.Tippgruppe?.Id" />
+                    <div class="button-container">
+                        <button type="button" class="btn btn-outline" data-bs-dismiss="modal">Abbrechen</button>
+                        <button type="submit" class="btn btn-primary">Speichern</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<!-- Modal for adding regel -->
+<div class="modal fade" id="addRegelModal" tabindex="-1" aria-labelledby="addRegelModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-action="RegelHinzufuegen" asp-controller="Verwaltung">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addGameModalLabel">Neue Punkteregel</h5>
+                    <button type="button" class="icon-btn" style="padding: 4px 8px;" data-bs-dismiss="modal"
+                        aria-label="Schließen">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="regelname" class="form-label">Name*</label>
+                        <input asp-for="NewPunkteRegel.Name" class="form-control" placeholder="Neue Punkteregel"
+                            required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="regelbeschreibung" class="form-label">Beschreibung</label>
+                        <input asp-for="NewPunkteRegel.Beschreibung" class="form-control"
+                            placeholder="Beschreibung der Punkteregel" />
+                    </div>
+                    <div class="mb-3 d-flex align-items-center">
+                        <label for="quote1" class="form-label mb-0" style="width: 130px;">Exakter Tipp</label>
+                        <input asp-for="NewPunkteRegel.Quote1" type="number" class="form-control" id="quote1"
+                            style="width: 120px;" min="0" max="9" required />
+                    </div>
+                    <div class="mb-3 d-flex align-items-center">
+                        <label for="quote2" class="form-label mb-0" style="width: 130px;">Tordifferenz</label>
+                        <input asp-for="NewPunkteRegel.Quote2" type="number" class="form-control" id="quote2"
+                            style="width: 120px;" min="0" max="9" required />
+                    </div>
+                    <div class="mb-3 d-flex align-items-center">
+                        <label for="quote3" class="form-label mb-0" style="width: 130px;">Tendenztipp</label>
+                        <input asp-for="NewPunkteRegel.Quote3" type="number" class="form-control" id="quote3"
+                            style="width: 120px;" min="0" max="9" required />
+                    </div>
+                    <div class="mb-3 d-flex align-items-center">
+                        <label for="quote4" class="form-label mb-0" style="width: 130px;">Falscher Tipp</label>
+                        <input asp-for="NewPunkteRegel.Quote4" type="number" class="form-control" id="quote4"
+                            style="width: 120px;" min="0" max="9" required />
+                    </div>
+
+
+                    <input type="hidden" name="groupId" value="@Model.Tippgruppe?.Id" />
+                    <div class="button-container">
+                        <button type="button" class="btn btn-outline" data-bs-dismiss="modal">Abbrechen</button>
+                        <button type="submit" class="btn btn-primary">Speichern</button>
+                    </div>
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Modal for editing game -->
+<div class="modal fade" id="editGameModal" tabindex="-1" aria-labelledby="editGameModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-action="SpielInGruppeBearbeiten" asp-controller="Verwaltung">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editGameModalLabel">Spiel hinzufügen</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- Wettbewerb -->
+                    <div class="mb-3">
+                        <label for="competition" class="form-label">Wettbewerb*</label>
+                        <input type="text" class="form-control" id="editcompetition" readonly />
+                    </div>
+
+                    <!-- Spiel(e) -->
+                    <div class="mb-3">
+                        <label for="games" class="form-label">Spiel(e)*</label>
+                        <input type="text" class="form-control" id="editgames" readonly />
+                    </div>
+
+                    <!-- Punkteregel -->
+                    <div class="mb-3">
+                        <label for="pointsRule" class="form-label">Punkteregel*</label>
+                        <select class="form-select" id="editpointsRule" asp-items="Model.PunkteRegelnSelectList"
+                            name="regelId">
+                            <option selected value="0">Standard Regelset</option>
+                            <!-- Weitere Regelsets hier -->
+                        </select>
+                    </div>
+
+                    <!-- Tipptermin -->
+                    <div class="mb-3">
+                        <label class="form-label">Tipptermin</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="tipTime" id="edittipUntilStart" checked>
+                            <label class="form-check-label" for="tipUntilStart">
+                                Tipptermin bis Anpfiff
+                            </label>
+                        </div>
+                    </div>
+                    <input type="hidden" name="groupId" value="@Model.Tippgruppe?.Id" />
+                    <input type="hidden" name="spielId" id="editgameId" />
+
+
+                    <div class="button-container">
+                        <button type="button" class="btn btn-outline" data-bs-dismiss="modal">Abbrechen</button>
+                        <button type="submit" class="btn btn-primary">Speichern</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<!-- Modal for deleting regel -->
+<div class="modal fade" id="deleteRegelModal" tabindex="-1" aria-labelledby="deleteRegelModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-controller="Verwaltung" asp-action="RegelLoeschen">
+                <input type="hidden" name="groupId" value="@Model.Tippgruppe?.Id" />
+                <input type="hidden" name="regelid" id="delete-regel-id" />
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteRegelModalLabel">Punkteregel löschen</h5>
+                    <button type="button" class="icon-btn" style="padding: 4px 8px;" data-bs-dismiss="modal"
+                        aria-label="Schließen">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Bist du sicher, dass du die Punkteregel löschen möchtest? Spiele mit dieser Regel werden auf die
+                        Standardregel zurückgesetzt.</p>
+                    <div class="button-container">
+                        <button type="button" class="btn btn-outline" data-bs-dismiss="modal">Abbrechen</button>
+                        <button type="submit" class="btn btn-danger">Löschen</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Modal for deleting tippgruppe-->
+<div class="modal fade" id="deleteTGModal" tabindex="-1" aria-labelledby="deleteTGModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-controller="Verwaltung" asp-action="TippgruppeLoeschen">
+                <input type="hidden" value="@Model.Tippgruppe?.Id" name="id" />
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteTGModalLabel">Tippgruppe löschen</h5>
+                    <button type="button" class="icon-btn" style="padding: 4px 8px;" data-bs-dismiss="modal"
+                        aria-label="Schließen">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Bist du sicher, dass du die Tippgruppe löschen möchtest?</p>
+                    <div class="button-container">
+                        <button type="button" class="btn btn-outline" data-bs-dismiss="modal">Abbrechen</button>
+                        <button type="submit" class="btn btn-danger">Löschen</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Modal for deleting Spiele-->
+<div class="modal fade" id="deleteSpielModal" tabindex="-1" aria-labelledby="deleteSpielModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-controller="Verwaltung" asp-action="SpielInGruppeLoeschen">
+                <input type="hidden" name="groupId" value="@Model.Tippgruppe?.Id" />
+                <input type="hidden" name="spielId" id="delete-spiel-id" />
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteSpielModalLabel">Spiel löschen</h5>
+                    <button type="button" class="icon-btn" style="padding: 4px 8px;" data-bs-dismiss="modal"
+                        aria-label="Schließen">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Bist du sicher, dass du das Spiel löschen möchtest?</p>
+                    <div class="button-container">
+                        <button type="button" class="btn btn-outline" data-bs-dismiss="modal">Abbrechen</button>
+                        <button type="submit" class="btn btn-danger">Löschen</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    const chkPasswort = document.getElementById('passwordProtected');
+    const collapseContent = document.getElementById('collapsePassword');
+
+    chkPasswort.addEventListener('change', function () {
+        collapseContent.style.display = this.checked ? 'block' : 'none';
+    });
+</script>
+<script>
+    document.getElementById('competition').addEventListener('change', function () {
+        const selectedLigaId = this.value;
+        const gameSelect = document.getElementById('games');
+        const gameOptions = gameSelect.querySelectorAll('option');
+
+        gameOptions.forEach(option => {
+            const ligaId = option.getAttribute('data-liga-id');
+
+            if (!ligaId) {
+                // Keep the "Bitte auswählen" option always visible
+                option.style.display = '';
+                return;
+            }
+
+            if (ligaId === selectedLigaId) {
+                option.style.display = '';
+            } else {
+                option.style.display = 'none';
+            }
+        });
+
+        // Reset the selection to the "Bitte auswählen" after filtering
+        gameSelect.selectedIndex = 0;
+    });
+</script>
+<script>
+    document.getElementById('grundeinstellungenForm').addEventListener('submit', function (e) {
+        e.preventDefault(); // prevent default form submission
+
+        const form = e.target;
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) throw new Error("Network response was not ok");
+                return response.text(); // or .json() if you return JSON
+            })
+            .then(data => {
+                //document.getElementById('resultMessage').innerText = "Erfolgreich gespeichert!";
+                // optional: show data or update parts of the page dynamically
+            })
+            .catch(error => {
+                //document.getElementById('resultMessage').innerText = "Fehler beim Speichern!";
+                console.error('Error:', error);
+            });
+    });
+</script>
+<script>
+    const deleteRegelModal = document.getElementById('deleteRegelModal');
+    deleteRegelModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const regelId = button.getAttribute('data-regelid');
+        const hiddenInput = document.getElementById('delete-regel-id');
+        hiddenInput.value = regelId;
+    });
+    const deleteSpielModal = document.getElementById('deleteSpielModal');
+    deleteSpielModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const spielId = button.getAttribute('data-spielid');
+        const hiddenInput = document.getElementById('delete-spiel-id');
+        hiddenInput.value = spielId;
+    });
+</script>
+<script>
+    const editGameModal = document.getElementById('editGameModal');
+    editGameModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        if (!button) return;
+
+        const spielId = button.getAttribute('data-game-id');
+        if (!spielId) {
+            document.getElementById('editGameModalLabel').textContent = "Spiel hinzufügen";
+        } else {
+            document.getElementById('editGameModalLabel').textContent = "Spiel bearbeiten";
+        }
+        const competition = button.getAttribute('data-competition');
+        const teams = button.getAttribute('data-teams');
+        const ruleId = button.getAttribute('data-rule');
+        const tipTime = button.getAttribute('data-tiptime');
+
+        document.getElementById('editgameId').value = spielId || '';
+        document.getElementById('editcompetition').value = competition || '';
+        document.getElementById('editgames').value = teams || '';
+
+        const pointsRuleSelect = document.getElementById('editpointsRule');
+        if (ruleId) {
+            pointsRuleSelect.value = ruleId;
+        } else {
+            pointsRuleSelect.selectedIndex = 0;
+        }
+
+        const tipUntilStartRadio = document.getElementById('edittipUntilStart');
+        const customTipTimeRadio = document.getElementById('editcustomTipTime');
+        if (!tipTime || tipTime === "bisAnpfiff") {
+            tipUntilStartRadio.checked = true;
+            customTipTimeRadio.checked = false;
+        } else {
+            tipUntilStartRadio.checked = false;
+            customTipTimeRadio.checked = true;
+        }
+    });
+
+</script>
+<script>
+    $(document).ready(function () {
+        // Debounce to avoid too many requests while typing
+        let debounceTimeout;
+        $('.quote-input').on('input', function () {
+            clearTimeout(debounceTimeout);
+            const $row = $(this).closest('tr');
+            const regelId = $row.data('rowregelid');
+            const quote1 = $row.find('input[name$="Quote1"]').val();
+            const quote2 = $row.find('input[name$="Quote2"]').val();
+            const quote3 = $row.find('input[name$="Quote3"]').val();
+            const quote4 = $row.find('input[name$="Quote4"]').val();
+
+            const $successMsg = $row.find('.success-message');
+            const $errorMsg = $row.find('.error-message');
+
+            debounceTimeout = setTimeout(function () {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("RegelBearbeiten", "Verwaltung")',
+                    data: {
+                        regelId: regelId,
+                        quote1: quote1,
+                        quote2: quote2,
+                        quote3: quote3,
+                        quote4: quote4
+                    },
+                    success: function () {
+                        $successMsg.removeClass('d-none').fadeIn();
+                        setTimeout(function () { $successMsg.fadeOut(); }, 2000);
+                    },
+                    error: function () {
+                        $errorMsg.removeClass('d-none').fadeIn();
+                        setTimeout(function () { $errorMsg.fadeOut(); }, 3000);
+                    }
+                });
+            }, 400);
+        });
+    });
+
+</script>
