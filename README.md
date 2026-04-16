@@ -26,7 +26,7 @@ Achtung! Da dieses Produkt im Rahmen eines Uniprojektes entwickelt wurde, war es
 - **Versionskontrolle**: Git, GitHub
 
 ## Relevante Repos für die Ausführung dieses Projektes:
-https://github.com/aksinia-heuta/tipp-plattform für die Web-Applikation
+https://github.com/Oversear13/Tipp-Plattform-IVA.git für die Web-Applikation
 https://github.com/Oversear13/MauiTippPlattform für die Maui- Applikation
 https://github.com/Oversear13/TippPlattformMaui.Shared für die Dto's die wichtig für die Kommunikation zwischen App- und Backend- Projekt sind.
 
