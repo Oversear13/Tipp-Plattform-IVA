@@ -1,0 +1,76 @@
+ :root {
+    --color-blue-base: #0B1623;
+    --color-blue-p8: #102134;
+    --color-blue-p16: #162B45;
+    --color-blue-p32: #1F3A5F;
+    
+    --color-green-base: #22FFA6;
+    --color-green-m8: #1FE696;
+  
+    --color-white-base: #F0F8FF;
+    --color-white-m16: #B3C6D1;
+    --color-white-m48: #718093;
+
+    --color-orange-base: #FF9F43;
+    --color-orange-m8: #FF8C2A;
+  
+    --color-text-primary: var(--color-white-base);
+    --color-text-secondary: var(--color-white-m16);
+    --color-text-tertiary: var(--color-white-m48);
+  
+    --color-button-primary: var(--color-green-base);
+    --color-button-primary-hover: var(--color-green-m8);
+
+    --color-button-secondary: transparent;
+    --color-button-secondary-border: var(--color-green-m48);
+    --color-button-secondary-hover-border: var(--color-green-m8);
+    
+    --color-success: #4CAF50;
+    --color-warning: #FF9800;
+    --color-error: #F44336;
+    --color-info: #2196F3;
+  
+    --color-input-background: transparent;
+    --color-input-border: var(--color-white-m48);
+    --color-input-border-focus: var(--color-white-base);
+  
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.14);
+  }
+  
+  .text-green {
+    color: var(--color-green-base);
+  }
+  
+  .text-blue {
+    color: var(--color-blue-base);
+  }
+
+  .text.danger {
+    color: var(--color-orrange-base);
+  }
+
+  .text-white-main {
+    color: var(--color-white-base);
+  }
+
+  .text-white-secondary {
+    color: var(--color-white-m16);
+  }
+  
+  .bg-blue {
+    background-color: var(--color-blue-base);
+  }
+  
+  .bg-dialog {
+    background-color: var(--color-blue-p8);
+  }
+
+  .bg-dialog-header {
+    background-color: var(--color-blue-p16);
+  }
+  
+  .bg-green {
+    background-color: var(--color-green-base);
+  }

@@ -1,0 +1,211 @@
+/*Buttons*/
+
+.btn {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 24px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background-color: var(--color-green-base);
+    color: var(--color-blue-base);
+    border: none;
+    min-width: 120px;
+    max-height: 40px;
+}
+
+.btn-primary:hover {
+    background-color: var(--color-green-m8);
+    color: var(--color-white-base);
+}
+
+.btn-primary:disabled {
+    background-color: var(--color-green-base);
+    color: var(--color-blue-base);
+    opacity: 50%;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--color-white-base);
+    border: 1px solid var(--color-white-m48);
+    min-width: 120px;
+}
+
+.btn-outline:hover {
+    border-color: var(--color-green-base);
+    color: var(--color-green-base);
+}
+
+.btn-outline:disabled {
+    background-color: transparent;
+    color: var(--color-white-base);
+    border: 1px solid var(--color-white-m48);
+    opacity: 50%;
+    cursor: not-allowed;
+}
+
+.btn-nav {
+    background-color: var(--color-blue-p32);
+    color: var(--color-white-m16);
+    width: 40px;
+    height: 40px;
+    border: none;
+    text-decoration: none;
+}
+
+.btn-nav:hover {
+    background-color: var(--color-blue-p16);
+    color: var(--color-white-base);
+}
+
+.btn-danger {
+    background-color: var(--color-orange-base);
+    color: var(--color-blue-base);
+    border: none;
+    min-width: 120px;
+}
+
+.btn-danger:hover {
+    background-color: var(--color-orange-m8);
+    color: var(--color-white-base);
+}
+
+.btn-danger:disabled {
+    background-color: var(--color-orange-base);
+    color: var(--color-blue-base);
+    opacity: 50%;
+    cursor: not-allowed;
+}
+
+/*zurück button to previous tab*/
+.btn-back {
+    background-color: transparent;
+    color: var(--color-white-m16);
+    text-decoration: none;
+    border: none;
+    text-align: left;
+    padding-left: 0;
+    margin-bottom: 36px;
+}
+
+.btn-back:hover {
+    color: var(--color-green-base);
+}
+
+.btn-back .back-icon {
+    color: var(--color-white-m16);
+    font-size: 14px;
+    margin-right: 8px;
+}
+
+.btn-back:hover .back-icon {
+    color: var(--color-green-base);
+}
+
+/*button for edit and delete*/
+.icon-btn {
+    background-color: transparent;
+    color: var(--color-white-base);
+    border: none;
+    cursor: pointer;
+    padding: 12px;
+    margin: 0;
+    border-radius: 8px;
+    justify-content: center;
+    align-items: center;
+}
+
+.icon-btn:hover {
+    background-color: var(--color-blue-p8);
+    color: var(--color-green-base);
+}
+
+.icon-button i {
+    font-size: 24px;
+}
+
+.icon-btn:disabled {
+    opacity: 50%;
+    cursor: not-allowed;
+}
+
+/*container for 2 buttons*/
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 36px;
+    gap: 36px;
+}
+
+.button-container .btn {
+    flex: 1;
+    width: 100%;
+}
+
+/* pagination */
+.active>.page-link,
+.page-link.active {
+    color: var(--color-white-base);
+    background-color: var(--color-blue-p32);
+    border-color: var(--color-blue-base);
+}
+
+.page-item:first-child .page-link {
+    color: var(--color-white-base);
+    background-color: var(--color-blue-p32);
+    border-color: var(--color-blue-base);
+}
+
+.page-item:first-child .page-link:hover {
+    border-color: var(--color-green-m8);
+}
+
+.page-item:not(:first-child) .page-link {
+    color: var(--color-white-base);
+    background-color: var(--color-blue-p32);
+    border-color: var(--color-blue-base);
+}
+
+.page-item:not(:first-child) .page-link:hover {
+    border-color: var(--color-green-m8);
+}
+
+.page-item:not(:first-child) .page-link.disabled {
+    opacity: 50%;
+}
+
+.disabled>.page-link,
+.page-link.disabled {
+    opacity: 50%;
+    color: var(--color-white-base);
+    background-color: var(--color-blue-p32);
+    border-color: var(--color-blue-base);
+}
+
+.active>.page-link:hover,
+.page-link.active:hover {
+    border-color: var(--color-green-m8);
+}
+
+/* table search */
+div.dataTables_wrapper div.dataTables_filter label {
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 24px;
+}
+
+div.dataTables_wrapper div.dataTables_filter {
+    margin-bottom: 16px;
+}

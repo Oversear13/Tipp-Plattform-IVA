@@ -1,0 +1,247 @@
+/* Auth Section (Anmelden, Registieren) for landingpage*/
+.auth-container {
+    padding-top: 64px;
+    margin-bottom: 80px;
+    display: flex;
+    gap: 96px;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-container {
+    background-color: var(--color-blue-p16);
+    align-items: center;
+    justify-content: flex-start;
+    display: flex;
+    border-radius: 8px;
+    padding: 36px 48px;
+    width: 100%;
+}
+
+.form-container h1 {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 36px;
+    letter-spacing: 0.36px;
+    margin-bottom: 36px;
+}
+
+.login-form {
+    width: 100%;
+}
+
+.register-form {
+    width: 100%;
+
+}
+
+.form-field {
+    background-color: transparent;
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.form-field p {
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 21px;
+    letter-spacing: 0.21px;
+    margin-top: 6px;
+    padding-left: 14px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--color-text-primary);
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 24px;
+    letter-spacing: 0.24px;
+}
+
+.form-control {
+    background-color: transparent;
+    border: 1px solid var(--color-white-m48);
+    border-radius: 4px;
+    padding: 16px 12px;
+    width: 100%;
+    color: var(--color-text-primary);
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 24px;
+    letter-spacing: 0.24px;
+    transition: border-color 0.3s;
+}
+
+.form-control:hover {
+    background-color: transparent;
+    outline: none;
+    border-color: var(--color-white-base);
+    box-shadow: none;
+}
+
+.form-control:focus {
+    color: var(--color-text-primary);
+    background-color: transparent;
+    outline: none;
+    border-color: var(--color-green-base);
+    box-shadow: none;
+}
+
+.form-select {
+    background-color: transparent;
+    border: 1px solid var(--color-white-m48);
+    border-radius: 4px;
+    padding: 16px 12px;
+    width: 100%;
+    color: var(--color-text-primary);
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 24px;
+    letter-spacing: 0.24px;
+    transition: border-color 0.3s;
+}
+
+.form-select:hover {
+    background-color: transparent;
+    outline: none;
+    border-color: var(--color-white-base);
+    box-shadow: none;
+}
+
+.form-select:focus {
+    color: var(--color-text-primary);
+    background-color: transparent;
+    outline: none;
+    border-color: var(--color-green-base);
+    box-shadow: none;
+}
+
+.form-control::placeholder {
+    color: var(--color-white-m16);
+}
+
+input[type="date"] {
+    color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+form .validation-summary {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+form .validation-summary ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+form .validation-summary ul li {
+    color: var(--color-error);
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 24px;
+    letter-spacing: 0.24px;
+}
+
+.tipp-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: center;
+}
+
+.settings-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    margin-bottom: 80px;
+}
+
+.table-container {
+    margin-bottom: 80px;
+}
+
+.text-danger {
+    color: var(--color-error);
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 24px;
+    letter-spacing: 0.24px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 36px;
+}
+
+.remember-me label {
+    margin-left: 8px;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 24px;
+    letter-spacing: 0.24px;
+    color: var(--color-text-secondary);
+}
+
+.remember-me label:hover {
+    color: var(--color-text-primary);
+}
+
+.forgot-password {
+    margin-left: auto;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 24px;
+    letter-spacing: 0.24px;
+    color: var(--color-text-secondary);
+}
+
+.form-floating>.form-control-plaintext::placeholder,
+.form-floating>.form-control::placeholder {
+    color: var(--bs-secondary-color);
+    text-align: end;
+}
+
+.form-floating>.form-control-plaintext:focus::placeholder,
+.form-floating>.form-control:focus::placeholder {
+    text-align: start;
+}
+
+.form-check {
+    margin-bottom: 8px;
+}
+
+.form-check-input {
+    margin-right: 10px;
+    background-color: transparent;
+    border: 1px solid var(--color-white-m48);
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.form-check-input[type=checkbox] {
+    border-radius: 2px;
+}
+
+.form-check-input:checked[type=radio] {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%2322FFA6'/%3e%3c/svg%3e");
+    background-color: var(--color-blue-base);
+    border: 1px solid var(--color-green-base);
+}
+
+.form-check-input:checked[type=checkbox] {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%230B1623' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+    background-color: var(--color-green-base);
+    border: none;
+}

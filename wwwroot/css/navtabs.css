@@ -1,0 +1,76 @@
+/* Tab Navigation */
+.nav-tabs {
+    border-bottom: none;
+    margin-bottom: 24px;
+    display: flex;
+    overflow-x: auto;
+}
+
+.nav-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.nav-tabs .nav-item {
+    margin-right: 0px;
+}
+
+.nav-tabs .nav-link {
+    color: var(--color-white-m16);
+    background-color: transparent;
+    border: none;
+    padding: 12px 16px;
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 27px;
+    letter-spacing: 0.27px;
+    border-bottom: 1px solid var(--color-blue-p16);
+    transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-tabs .nav-link:hover {
+    color: var(--color-white-base);
+    border-bottom: 1px solid var(--color-blue-p16);
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--color-green-base);
+    background-color: transparent;
+    border-bottom: 3px solid var(--color-green-base);
+}
+
+.tab-content {
+    background-color: transparent;
+    padding: 0px;
+}
+
+.tab-pane {
+    opacity: 0;
+}
+
+.tab-pane.show {
+    opacity: 1;
+}
+
+.tab-content table input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    text-align: center;
+    background-color: var(--color-blue-base);
+    border: 1px solid var(--color-white-m48);
+    border-radius: 4px;
+    color: var(--color-white-base);
+}
+
+.tab-content table input[type="number"]:focus {
+    outline: none;
+    border-color: var(--color-green-base);
+}
+
+/* Only show Verwaltung tab for admins */
+.nav-tabs #verwaltung-tab.hidden {
+    display: none;
+}
+
+.tippabgabe-wrapper {
+    padding: 8px;
+}

@@ -1,0 +1,138 @@
+.container .table,
+table.table,
+.table.table-striped,
+.table.table-hover {
+  width: 100%;
+  outline: 1px solid var(--color-blue-p16);;
+  border-color: var(--color-blue-p16);
+  background-color: var(--color-blue-base);
+  color: var(--color-white-base);
+  margin-bottom: 64px;
+  border-radius: 8px;
+  
+  --bs-table-bg: var(--color-blue-base);
+  --bs-table-striped-bg: var(--color-blue-p8);
+  --bs-table-hover-bg: var(--color-blue-p16);
+  --bs-table-color: var(--color-text-primary);
+  --bs-table-striped-color: var(--color-text-primary);
+  --bs-table-hover-color: var(--color-text-primary);
+  --bs-table-active-bg: var(--color-blue-p16);
+  --bs-table-active-color: var(--color-text-primary);
+}
+
+.table > thead,
+.container .table > thead {
+  vertical-align: middle;
+  background-color: var(--color-blue-p8);
+  font-weight: 500;
+}
+
+/* Tabellenkopfzeilen */
+.table > thead > tr,
+.container .table > thead > tr {
+  background-color: var(--color-blue-p8);
+  height: 56px;
+  display: table-row;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Tabellenkörperzeilen */
+.table > tbody > tr,
+.container .table > tbody > tr {
+  background-color: var(--color-blue-base);
+  height: 64px;
+  align-items: center;
+}
+
+/* Überschriften */
+.table > thead > tr > th,
+.table > thead th,
+.container .table > thead > tr > th {
+  color: var(--color-white-base);
+  background-color: transparent;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.24px;
+  padding-left: 16px;
+  text-align: center;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--color-blue-p16);
+}
+
+.table > tbody > tr:not(:last-child) > td,
+.table > tbody td,
+.container .table > tbody > tr:not(:last-child) > td {
+  color: var(--color-white-base);
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 24px;
+  letter-spacing: 0.24px;
+  padding-left: 16px;
+  padding-top: 0;
+  padding-bottom: 0;
+  text-align: center;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--color-blue-p16);
+}
+
+.table-hover > tbody > tr:hover,
+.container .table-hover > tbody > tr:hover {
+  background-color: var(--color-blue-p16);
+  cursor: pointer;
+}
+
+.table,
+.table th,
+.table td,
+.container .table,
+.container .table th,
+.container .table td {
+  border: none;
+}
+
+.table > tbody > tr:not(:last-child),
+.container .table > tbody > tr:not(:last-child) {
+  border-bottom: 1px solid var(--color-blue-p16);
+}
+
+.table>:not(caption)>*>* {
+  padding: 16px;
+  color: var(--color-white-base);
+  background-color: transparent;
+  border-bottom-width: 1px;
+  border-bottom-color: var(--color-blue-p16);
+  box-shadow: none;
+}
+
+.table > tbody > tr:last-child > td,
+.container .table > tbody > tr:last-child > td {
+    border-bottom: none;
+}
+
+.game-result {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+  width: 75%;
+  margin: 0 auto;
+  justify-content: center;
+}
+
+.team-result {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.team-name {
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.team-score {
+  text-align: right;
+}

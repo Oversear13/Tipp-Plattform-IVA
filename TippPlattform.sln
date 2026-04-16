@@ -1,0 +1,33 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TippPlattform", "TippPlattform.csproj", "{748D2E42-F67D-50D1-075A-63597453766F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maui TippPlattform", "..\Maui TippPlattform\Maui TippPlattform.csproj", "{69FA2F0B-64A3-894C-A2B5-EC47E31C6265}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TippPlattformMaui.Shared", "..\TippPlattformMaui.Shared\TippPlattformMaui.Shared.csproj", "{36E38C8B-D7EB-A497-1045-2D506B2EFDE7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{748D2E42-F67D-50D1-075A-63597453766F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{748D2E42-F67D-50D1-075A-63597453766F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{748D2E42-F67D-50D1-075A-63597453766F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{748D2E42-F67D-50D1-075A-63597453766F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5986B055-7C55-F94E-E2E1-D465A971CD63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5986B055-7C55-F94E-E2E1-D465A971CD63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5986B055-7C55-F94E-E2E1-D465A971CD63}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{5986B055-7C55-F94E-E2E1-D465A971CD63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5986B055-7C55-F94E-E2E1-D465A971CD63}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4D41B896-1EFB-46C5-93BF-9BC957342B55}
+	EndGlobalSection
+EndGlobal
